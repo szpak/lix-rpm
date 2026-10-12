@@ -15,7 +15,7 @@ Source:         %{forgesource}
 Source1:        lix-dub-deps-local-%{version}.tar.xz
 # TODO: In fact version 1.1 - add explicit versioning, if provided upstream - https://github.com/SimonN/LixD/issues/457
 Source2:        https://www.lixgame.com/dow/lix-music.zip
-Source3:        vendor.sh
+Source3:        generate-local-dependencies.sh
 
 BuildRequires:  ldc
 BuildRequires:  dub
@@ -101,6 +101,7 @@ install -Dm 0644 data/desktop/com.lixgame.Lix.desktop %{buildroot}%{_datadir}/ap
 %changelog
 * Mon Oct 12 2026 Marcin Zajaczkowski <mszpak ATT wp DOTT pl> 0.10.36-2
 - remove some linter warnings
+- vendor.sh → generate-local-dependencies.sh
 
 * Mon Oct 12 2026 Marcin Zajaczkowski <mszpak ATT wp DOTT pl> 0.10.36-1
 - upgrade to 0.10.36
