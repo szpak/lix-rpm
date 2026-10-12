@@ -1,7 +1,7 @@
 %global forgeurl https://github.com/SimonN/LixD/
 
 Name:           lix
-Version:        0.10.35
+Version:        0.10.36
 Release:        1%{?dist}
 Summary:        A single and multiplayer puzzle game inspired by Lemmings
 Group:          Games and Entertainment
@@ -95,6 +95,9 @@ install -Dm 0644 data/desktop/com.lixgame.Lix.desktop %{buildroot}%{_datadir}/ap
 %{_datadir}/lix/music
 
 %changelog
+* Mon Oct 12 2026 Marcin Zajaczkowski <mszpak ATT wp DOTT pl> 0.10.36-1
+- upgrade to 0.10.36
+
 * Sun Oct 11 2026 josef radinger <cheese@nosuchhost.net> - 0.10.35-1
 - bump version
 - use versioned local-deps (version instead of date)
