@@ -16,7 +16,6 @@ Source1:        lix-dub-deps-local-%{version}.tar.xz
 # TODO: In fact version 1.1 - add explicit versioning, if provided upstream - https://github.com/SimonN/LixD/issues/457
 Source2:        https://www.lixgame.com/dow/lix-music.zip
 Source3:        vendor.sh
-Patch0:         system-path-dejavusans-font.patch
 
 BuildRequires:  ldc
 BuildRequires:  dub
@@ -55,7 +54,6 @@ Music for Lix - a single and multiplayer puzzle game inspired by Lemmings.
 
 %prep
 %setup -q -n LixD-%{version}
-%patch 0 -p1
 # TODO: Ask upstream to switch end of lines and/or normalize with .gitattributes
 dos2unix README.md doc/cmdargs.txt doc/history.txt doc/levmaint.txt doc/thanks.txt
 tar xJf %{SOURCE1}
@@ -74,6 +72,7 @@ cp -ar data/ images/ levels/ %{buildroot}%{_datadir}/%{name}
 cp -ar music/ %{buildroot}%{_datadir}/%{name}
 
 rm -f %{buildroot}%{_datadir}/lix/data/fonts/djvusans.ttf
+ln -s %{_fontbasedir}/dejavu-sans-fonts/DejaVuSans.ttf %{buildroot}%{_datadir}/lix/data/fonts/djvusans.ttf
 
 install -Dm 0644 doc/lix.6 %{buildroot}%{_mandir}/man6/lix.6
 install -Dm 0644 data/images/lix_logo.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/com.lixgame.Lix.svg
