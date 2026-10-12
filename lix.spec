@@ -2,7 +2,7 @@
 
 Name:           lix
 Version:        0.10.36
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A single and multiplayer puzzle game inspired by Lemmings
 Group:          Games and Entertainment
 # CC0-1.0 for everything, expect "Bitstream Vera and Public Domain" for dejavu-sans fonts
@@ -16,6 +16,7 @@ Source1:        lix-dub-deps-local-%{version}.tar.xz
 # TODO: In fact version 1.1 - add explicit versioning, if provided upstream - https://github.com/SimonN/LixD/issues/457
 Source2:        https://www.lixgame.com/dow/lix-music.zip
 Source3:        vendor.sh
+Patch0:         system-path-dejavusans-font.patch
 
 BuildRequires:  ldc
 BuildRequires:  dub
@@ -28,6 +29,8 @@ BuildRequires:  allegro5-addon-image-devel
 BuildRequires:  allegro5-addon-ttf-devel
 # dub uses git client to determine version of dependencies in local cache
 BuildRequires:  git
+# To avoid "wrong-file-end-of-line-encoding" warning in rpmlint
+BuildRequires: dos2unix
 
 Requires:       dejavu-sans-fonts
 
@@ -35,10 +38,10 @@ Recommends:     lix-music = %{version}-%{release}
 
 %description
 Lix is a puzzle game inspired by Lemmings. Lix is free and open source.
-Assign skills to guide the lix through over 700 singleplayer puzzles.
+Assign skills to guide the lix through over 700 single-player puzzles.
 Design your own levels with the included editor.
-Attack and defend in real-time multiplayer for 2 to 8 players: Who can save the most lix?
-
+Attack and defend in real-time multiplayer for 2 to 8 players:
+Who can save the most lix?
 
 %package music
 Summary:        Music for Lix - a single and multiplayer puzzle game inspired by Lemmings
@@ -52,6 +55,9 @@ Music for Lix - a single and multiplayer puzzle game inspired by Lemmings.
 
 %prep
 %setup -q -n LixD-%{version}
+%patch 0 -p1
+# TODO: Ask upstream to switch end of lines and/or normalize with .gitattributes
+dos2unix README.md doc/cmdargs.txt doc/history.txt doc/levmaint.txt doc/thanks.txt
 tar xJf %{SOURCE1}
 unzip %{SOURCE2}
 
@@ -68,7 +74,6 @@ cp -ar data/ images/ levels/ %{buildroot}%{_datadir}/%{name}
 cp -ar music/ %{buildroot}%{_datadir}/%{name}
 
 rm -f %{buildroot}%{_datadir}/lix/data/fonts/djvusans.ttf
-ln -s %{_fontbasedir}/dejavu-sans-fonts/DejaVuSans.ttf %{buildroot}%{_datadir}/lix/data/fonts/djvusans.ttf
 
 install -Dm 0644 doc/lix.6 %{buildroot}%{_mandir}/man6/lix.6
 install -Dm 0644 data/images/lix_logo.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/com.lixgame.Lix.svg
@@ -95,6 +100,9 @@ install -Dm 0644 data/desktop/com.lixgame.Lix.desktop %{buildroot}%{_datadir}/ap
 %{_datadir}/lix/music
 
 %changelog
+* Mon Oct 12 2026 Marcin Zajaczkowski <mszpak ATT wp DOTT pl> 0.10.36-2
+- remove some linter warnings
+
 * Mon Oct 12 2026 Marcin Zajaczkowski <mszpak ATT wp DOTT pl> 0.10.36-1
 - upgrade to 0.10.36
 
