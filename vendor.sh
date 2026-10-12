@@ -1,7 +1,7 @@
 #!/bin/bash
 # we want a local dep-file for every new version
 
-VERS=0.10.36
+VERS=`rpmspec -q --queryformat="%{version}" --srpm lix.spec`
 
 if [ ! -d LixD-${VERS} ]; then
     tar -zxf LixD-${VERS}.tar.gz

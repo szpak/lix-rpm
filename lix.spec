@@ -2,7 +2,7 @@
 
 Name:           lix
 Version:        0.10.36
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A single and multiplayer puzzle game inspired by Lemmings
 Group:          Games and Entertainment
 # CC0-1.0 for everything, expect "Bitstream Vera and Public Domain" for dejavu-sans fonts
@@ -28,6 +28,9 @@ BuildRequires:  allegro5-addon-image-devel
 BuildRequires:  allegro5-addon-ttf-devel
 # dub uses git client to determine version of dependencies in local cache
 BuildRequires:  git
+BuildRequires:  libappstream-glib
+BuildRequires:  desktop-file-utils
+
 
 Requires:       dejavu-sans-fonts
 
@@ -72,8 +75,9 @@ ln -s %{_fontbasedir}/dejavu-sans-fonts/DejaVuSans.ttf %{buildroot}%{_datadir}/l
 
 install -Dm 0644 doc/lix.6 %{buildroot}%{_mandir}/man6/lix.6
 install -Dm 0644 data/images/lix_logo.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/com.lixgame.Lix.svg
-install -Dm 0644 data/desktop/com.lixgame.Lix.metainfo.xml %{buildroot}%{_datadir}/metainfo/com.lixgame.Lix-metainfo.xml
-install -Dm 0644 data/desktop/com.lixgame.Lix.desktop %{buildroot}%{_datadir}/applications/com.lixgame.Lix.desktop
+install -Dm 0644 data/desktop/com.lixgame.Lix.metainfo.xml %{buildroot}%{_metainfodir}/com.lixgame.Lix.metainfo.xml
+appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/*.metainfo.xml
+desktop-file-install --dir=%{buildroot}%{_datadir}/applications data/desktop/com.lixgame.Lix.desktop
 
 %files
 %doc README.md doc/cmdargs.txt doc/history.txt doc/levmaint.txt doc/thanks.txt
@@ -84,7 +88,7 @@ install -Dm 0644 data/desktop/com.lixgame.Lix.desktop %{buildroot}%{_datadir}/ap
 %{_datadir}/lix/levels
 %{_datadir}/icons/hicolor/scalable/apps/com.lixgame.Lix.svg
 %{_datadir}/applications/com.lixgame.Lix.desktop
-%{_datadir}/metainfo/com.lixgame.Lix-metainfo.xml
+%{_metainfodir}/com.lixgame.Lix.metainfo.xml
 %{_mandir}/man6/lix.6*
 # Already installed in other directories, no duplication needed
 %exclude %{_datadir}/lix/data/images/lix_logo.svg
@@ -95,6 +99,11 @@ install -Dm 0644 data/desktop/com.lixgame.Lix.desktop %{buildroot}%{_datadir}/ap
 %{_datadir}/lix/music
 
 %changelog
+* Mon Oct 12 2026 josef radinger <cheese@nosuchhost.net> - 0.10.36-2
+- update vendor.sh
+- validate appdata
+- use desktop-file-install
+
 * Mon Oct 12 2026 Marcin Zajaczkowski <mszpak ATT wp DOTT pl> 0.10.36-1
 - upgrade to 0.10.36
 
