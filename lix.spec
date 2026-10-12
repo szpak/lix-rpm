@@ -1,26 +1,35 @@
 %global forgeurl https://github.com/SimonN/LixD/
 
 Name:           lix
-Version:        0.10.26
-Release:        2%{?dist}
-Summary:        A single and multiplaer puzzle game inspired by Lemmings
+Version:        0.10.35
+Release:        1%{?dist}
+Summary:        A single and multiplayer puzzle game inspired by Lemmings
 Group:          Games and Entertainment
 # CC0-1.0 for everything, expect "Bitstream Vera and Public Domain" for dejavu-sans fonts
 License:        CC0-1.0 AND (Bitstream Vera and Public Domain)
 URL:            https://www.lixgame.com/
+
 # Add -i -v for detailed information
 %forgemeta
 Source:         %{forgesource}
-# TODO: Provide instruction how to locally build that "deps cache"
-Source1:        lix-dub-deps-local-0.10-20240219.tar.xz
+Source1:        lix-dub-deps-local-%{version}.tar.xz
 # TODO: In fact version 1.1 - add explicit versioning, if provided upstream - https://github.com/SimonN/LixD/issues/457
 Source2:        https://www.lixgame.com/dow/lix-music.zip
-BuildRequires:  ldc dub
+Source3:        vendor.sh
+
+BuildRequires:  ldc
+BuildRequires:  dub
 BuildRequires:  pkgconf-pkg-config
 BuildRequires:  enet-devel
-BuildRequires:  allegro5-devel allegro5-addon-acodec-devel allegro5-addon-audio-devel allegro5-addon-image-devel allegro5-addon-ttf-devel
+BuildRequires:  allegro5-devel
+BuildRequires:  allegro5-addon-acodec-devel
+BuildRequires:  allegro5-addon-audio-devel
+BuildRequires:  allegro5-addon-image-devel
+BuildRequires:  allegro5-addon-ttf-devel
 # dub uses git client to determine version of dependencies in local cache
 BuildRequires:  git
+
+Requires:       dejavu-sans-fonts
 
 Recommends:     lix-music = %{version}-%{release}
 
@@ -32,13 +41,13 @@ Attack and defend in real-time multiplayer for 2 to 8 players: Who can save the 
 
 
 %package music
-Summary:        Music for Lix - a single and multiplaer puzzle game inspired by Lemmings
+Summary:        Music for Lix - a single and multiplayer puzzle game inspired by Lemmings
 # CC0-1.0 for menulix.ogg and minim-mobius/, CC-BY-4.0 for rubix/
 License:        CC0-1.0 AND CC-BY-4.0
 BuildArch:      noarch
 
 %description music
-Music for Lix - a single and multiplaer puzzle game inspired by Lemmings.
+Music for Lix - a single and multiplayer puzzle game inspired by Lemmings.
 
 
 %prep
@@ -48,20 +57,19 @@ unzip %{SOURCE2}
 
 %build
 export DFLAGS="%{_d_optflags}"
-export DUB_DEPS_LOCAL_PATH=$(pwd)/dub-deps-local
-dub add-path "$DUB_DEPS_LOCAL_PATH"
+export DUB_DEPS_LOCAL_PATH=$(pwd)/lix-dub-deps-local-%{version}
 # TODO: Run unit-tests?
-dub build --nodeps --cache=local -f -b releaseXDG
-dub remove-path "$DUB_DEPS_LOCAL_PATH"
-# Needed?
-#dub clean-caches
+DUB_HOME="$DUB_DEPS_LOCAL_PATH" dub build --nodeps --cache=local -f -b releaseXDG
 
 %install
 install -Dm 0755 bin/%{name} %{buildroot}%{_bindir}/%{name}
 install -d %{buildroot}%{_datadir}/%{name}
-# TODO: can system font be used?
 cp -ar data/ images/ levels/ %{buildroot}%{_datadir}/%{name}
 cp -ar music/ %{buildroot}%{_datadir}/%{name}
+
+rm -f %{buildroot}%{_datadir}/lix/data/fonts/djvusans.ttf
+ln -s %{_fontbasedir}/dejavu-sans-fonts/DejaVuSans.ttf %{buildroot}%{_datadir}/lix/data/fonts/djvusans.ttf
+
 install -Dm 0644 doc/lix.6 %{buildroot}%{_mandir}/man6/lix.6
 install -Dm 0644 data/images/lix_logo.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/com.lixgame.Lix.svg
 install -Dm 0644 data/desktop/com.lixgame.Lix.metainfo.xml %{buildroot}%{_datadir}/metainfo/com.lixgame.Lix-metainfo.xml
@@ -87,6 +95,13 @@ install -Dm 0644 data/desktop/com.lixgame.Lix.desktop %{buildroot}%{_datadir}/ap
 %{_datadir}/lix/music
 
 %changelog
+* Sun Oct 11 2026 josef radinger <cheese@nosuchhost.net> - 0.10.35-1
+- bump version
+- use versioned local-deps (version instead of date)
+- add vendor.sh to create local-deps
+- small corrections in spec-file (typos)
+- remove djvusans.ttf and use Requires on dejavu-sans-fonts
+
 * Thu Aug 27 2026 Marcin Zajaczkowski <mszpak ATT wp DOTT pl> 0.10.26-2
 - rebuild for Fedora 44
 
