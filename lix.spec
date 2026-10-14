@@ -31,7 +31,6 @@ BuildRequires:  git
 BuildRequires:  libappstream-glib
 BuildRequires:  desktop-file-utils
 
-
 Requires:       dejavu-sans-fonts
 
 Recommends:     lix-music = %{version}-%{release}
