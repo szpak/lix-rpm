@@ -1,0 +1,46 @@
+diff --git a/src/gui/context.d b/src/gui/context.d
+index 07f0a136..25932e81 100644
+--- a/src/gui/context.d
++++ b/src/gui/context.d
+@@ -266,10 +266,38 @@ private:
+ 
+     ALLEGRO_FONT* makeFont(in int unscaledSize)
+     {
+-        immutable fn = new VfsFilename("./data/fonts/djvusans.ttf");
++        import std.string : toStringz;
++
++        immutable path = getFontPath();
+         immutable scaledSize = (unscaledSize * magnif).floor.to!int;
+-        ALLEGRO_FONT* f = al_load_ttf_font(
+-            fn.stringForReading.toStringz, scaledSize, 0);
++
++        ALLEGRO_FONT* f = al_load_ttf_font(path.toStringz, scaledSize, 0);
+         return f ? f : al_create_builtin_font();
+     }
++
++    private string getFontPath()
++    {
++        import std.file : exists;
++
++        // Array combining the local VFS path and the system fallback paths
++        string[] candidatePaths = [
++            "./data/fonts/djvusans.ttf",                     // Local build / development
++            "/usr/share/fonts/dejavu-sans-fonts/DejaVuSans.ttf", // Fedora / RHEL
++            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", // Debian / Ubuntu / Mint
++            "/usr/share/fonts/dejavu/DejaVuSans.ttf"          // Arch Linux / openSUSE
++        ];
++
++        // Unified loop using VfsFilename for consistent handling
++        foreach (p; candidatePaths)
++        {
++            immutable fn = new VfsFilename(p);
++            string resolvedPath = fn.stringForReading();
++            if (resolvedPath !is null && resolvedPath.exists) {
++                return resolvedPath;
++            }
++        }
++
++        // Ultimate fallback if nothing resolves
++        return "./data/fonts/djvusans.ttf";
++    }
+ }
