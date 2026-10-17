@@ -2,7 +2,7 @@
 
 Name:           lix
 Version:        0.10.36
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        A single and multiplayer puzzle game inspired by Lemmings
 Group:          Games and Entertainment
 # CC0-1.0 for everything, expect "Bitstream Vera and Public Domain" for dejavu-sans fonts
@@ -15,7 +15,7 @@ Source:         %{forgesource}
 Source1:        lix-dub-deps-local-%{version}.tar.xz
 # TODO: In fact version 1.1 - add explicit versioning, if provided upstream - https://github.com/SimonN/LixD/issues/457
 Source2:        https://www.lixgame.com/dow/lix-music.zip
-Source3:        vendor.sh
+Source3:        generate-local-dependencies.sh
 
 BuildRequires:  ldc
 BuildRequires:  dub
@@ -28,6 +28,8 @@ BuildRequires:  allegro5-addon-image-devel
 BuildRequires:  allegro5-addon-ttf-devel
 # dub uses git client to determine version of dependencies in local cache
 BuildRequires:  git
+# To avoid "wrong-file-end-of-line-encoding" warning in rpmlint
+BuildRequires:  dos2unix
 BuildRequires:  libappstream-glib
 BuildRequires:  desktop-file-utils
 
@@ -37,10 +39,10 @@ Recommends:     lix-music = %{version}-%{release}
 
 %description
 Lix is a puzzle game inspired by Lemmings. Lix is free and open source.
-Assign skills to guide the lix through over 700 singleplayer puzzles.
+Assign skills to guide the lix through over 700 single-player puzzles.
 Design your own levels with the included editor.
-Attack and defend in real-time multiplayer for 2 to 8 players: Who can save the most lix?
-
+Attack and defend in real-time multiplayer for 2 to 8 players:
+Who can save the most lix?
 
 %package music
 Summary:        Music for Lix - a single and multiplayer puzzle game inspired by Lemmings
@@ -54,6 +56,8 @@ Music for Lix - a single and multiplayer puzzle game inspired by Lemmings.
 
 %prep
 %setup -q -n LixD-%{version}
+# TODO: Ask upstream to switch end of lines and/or normalize with .gitattributes
+dos2unix README.md doc/cmdargs.txt doc/history.txt doc/levmaint.txt doc/thanks.txt
 tar xJf %{SOURCE1}
 unzip %{SOURCE2}
 
@@ -98,6 +102,10 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications data/desktop/com
 %{_datadir}/lix/music
 
 %changelog
+* Mon Oct 12 2026 Marcin Zajaczkowski <mszpak ATT wp DOTT pl> 0.10.36-3
+- remove some linter warnings
+- vendor.sh → generate-local-dependencies.sh
+
 * Mon Oct 12 2026 josef radinger <cheese@nosuchhost.net> - 0.10.36-2
 - update vendor.sh
 - validate appdata
