@@ -2,7 +2,7 @@
 
 Name:           lix
 Version:        0.10.36
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        A single and multiplayer puzzle game inspired by Lemmings
 Group:          Games and Entertainment
 # CC0-1.0 for everything, expect "Bitstream Vera and Public Domain" for dejavu-sans fonts
@@ -73,9 +73,6 @@ install -d %{buildroot}%{_datadir}/%{name}
 cp -ar data/ images/ levels/ %{buildroot}%{_datadir}/%{name}
 cp -ar music/ %{buildroot}%{_datadir}/%{name}
 
-rm -f %{buildroot}%{_datadir}/lix/data/fonts/djvusans.ttf
-ln -s %{_fontbasedir}/dejavu-sans-fonts/DejaVuSans.ttf %{buildroot}%{_datadir}/lix/data/fonts/djvusans.ttf
-
 install -Dm 0644 doc/lix.6 %{buildroot}%{_mandir}/man6/lix.6
 install -Dm 0644 data/images/lix_logo.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/com.lixgame.Lix.svg
 install -Dm 0644 data/desktop/com.lixgame.Lix.metainfo.xml %{buildroot}%{_metainfodir}/com.lixgame.Lix.metainfo.xml
@@ -86,6 +83,9 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications data/desktop/com
 %doc README.md doc/cmdargs.txt doc/history.txt doc/levmaint.txt doc/thanks.txt
 %license doc/copying.txt
 %{_bindir}/lix
+# Mentioned explicitly as it's a modified font version
+# It shouldn't be deleted during packaging, as a system font is not a drop-in replacement
+%{_datadir}/lix/data/fonts/djvusans.ttf
 %{_datadir}/lix/data
 %{_datadir}/lix/images
 %{_datadir}/lix/levels
@@ -102,6 +102,9 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications data/desktop/com
 %{_datadir}/lix/music
 
 %changelog
+* Sun Oct 18 2026 Marcin Zajaczkowski <mszpak ATT wp DOTT pl> 0.10.36-4
+- keep local djvusans as it contains changed glyphs
+
 * Mon Oct 12 2026 Marcin Zajaczkowski <mszpak ATT wp DOTT pl> 0.10.36-3
 - remove some linter warnings
 - vendor.sh → generate-local-dependencies.sh
